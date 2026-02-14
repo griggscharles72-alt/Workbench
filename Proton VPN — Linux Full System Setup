@@ -1,0 +1,96 @@
+# Proton VPN — Linux Full System Setup
+
+## Purpose
+
+This script installs Proton VPN on Ubuntu/Debian-based systems, launches the GUI client, and prepares optional automation for repeated use.
+
+All network traffic will route through the VPN once connected.
+
+---
+
+## Install Script
+
+```bash
+#!/bin/bash
+
+set -e
+
+echo "[+] Updating system..."
+sudo apt update
+
+echo "[+] Installing dependencies..."
+sudo apt install -y wget apt-transport-https gnupg
+
+echo "[+] Adding Proton repository..."
+wget -qO - https://repo.protonvpn.com/debian/public_key.asc | \
+gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/protonvpn.gpg > /dev/null
+
+echo "deb https://repo.protonvpn.com/debian stable main" | \
+sudo tee /etc/apt/sources.list.d/protonvpn.list
+
+echo "[+] Installing Proton VPN..."
+sudo apt update
+sudo apt install -y protonvpn-app
+
+echo "[+] Installation complete."
+echo "Run: protonvpn-app"
+```
+
+---
+
+## Launch
+
+```bash
+protonvpn-app
+```
+
+Login using:
+
+* Username: Proton email address
+* Password: Proton account password
+
+---
+
+## Optional Quick Launcher
+
+```bash
+mkdir -p ~/bin
+echo -e '#!/bin/bash\nprotonvpn-app' > ~/bin/vpn
+chmod +x ~/bin/vpn
+```
+
+Then run:
+
+```bash
+vpn
+```
+
+---
+
+## Verify Connection
+
+```bash
+curl ifconfig.me
+```
+
+If the IP is different from your ISP → VPN is active.
+
+---
+
+## Security Notes
+
+* Enable Kill Switch inside the app.
+* Enable Auto-connect on startup for persistent protection.
+* Free tier has limited servers but full encryption.
+
+---
+
+## Reuse
+
+This script can be copied to any compatible Linux system and reused.
+
+Recommended filename:
+
+```
+install_protonvpn.sh
+```
