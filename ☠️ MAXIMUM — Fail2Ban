@@ -1,0 +1,91 @@
+[DEFAULT]
+
+# Permanent bans
+bantime = -1
+
+# Very short detection window
+findtime = 5m
+
+# Almost no tolerance
+maxretry = 2
+
+backend = systemd
+
+# Ban across ALL ports immediately
+banaction = nftables-allports
+banaction_allports = nftables-allports
+
+# Never ban yourself
+ignoreip = 127.0.0.1/8 ::1
+
+# Escalation for repeat offenders
+bantime.increment = true
+bantime.factor = 8
+bantime.maxtime = 4w
+
+# Logging behavior
+usedns = warn
+logencoding = auto
+
+
+#################################
+# SSH — primary attack surface
+#################################
+
+[sshd]
+enabled = true
+port = ssh
+backend = systemd
+logpath = %(sshd_log)s
+
+maxretry = 2
+findtime = 5m
+bantime = -1
+
+banaction = nftables-allports
+
+
+#################################
+# Custom Python Service
+#################################
+
+[python-8888]
+enabled = true
+port = 8888
+filter = python-8888
+logpath = /var/log/syslog
+
+maxretry = 2
+bantime = -1
+
+
+#################################
+# Repeat Offenders — Nuclear
+#################################
+
+[recidive]
+enabled = true
+logpath = /var/log/fail2ban.log
+
+findtime = 1d
+maxretry = 1
+bantime = -1
+
+banaction = nftables-allports
+
+
+#################################
+# SSH DDoS / Flood Detection
+#################################
+
+[sshd-ddos]
+enabled = true
+port = ssh
+filter = sshd-ddos
+logpath = %(sshd_log)s
+
+maxretry = 1
+findtime = 5m
+bantime = -1
+
+banaction = nftables-allports
