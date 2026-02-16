@@ -115,3 +115,4 @@ echo "[BOOTSTRAP COMPLETE]"
 echo "Activate Python:"
 echo "source ~/python-projects/default/bin/activate"
 '
+sudo systemctl disable --now cups cups-browsed
